@@ -53,9 +53,7 @@ Organizations:
                 # If your MSP is configured with the new NodeOUs, you might
                 # want to use a more specific rule like the following:
                 # Rule: "OR('SampleOrg.admin', 'SampleOrg.client')"
-            Admins:
-                Type: Signature
-                Rule: "OR('SampleOrg.admin')"
+            
             Endorsement:
                 Type: Signature
                 Rule: "OR('SampleOrg.member')"
@@ -236,9 +234,6 @@ Application: &ApplicationDefaults
         Writers:
             Type: ImplicitMeta
             Rule: "ANY Writers"
-        Admins:
-            Type: ImplicitMeta
-            Rule: "MAJORITY Admins"
 
     # Capabilities describes the application level capabilities, see the
     # dedicated Capabilities section elsewhere in this file for a full
@@ -379,9 +374,6 @@ Orderer: &OrdererDefaults
         Writers:
             Type: ImplicitMeta
             Rule: "ANY Writers"
-        Admins:
-            Type: ImplicitMeta
-            Rule: "MAJORITY Admins"
         # BlockValidation specifies what signatures must be included in the block
         # from the orderer for the peer to validate it.
         BlockValidation:
@@ -416,9 +408,7 @@ Channel: &ChannelDefaults
             Type: ImplicitMeta
             Rule: "ANY Writers"
         # By default, who may modify elements at this config level
-        Admins:
-            Type: ImplicitMeta
-            Rule: "MAJORITY Admins"
+        
 
 
     # Capabilities describes the channel level capabilities, see the
@@ -504,27 +494,21 @@ Profiles:
                 - <<: *SampleOrg
                   Policies:
                       <<: *SampleOrgPolicies
-                      Admins:
-                          Type: Signature
-                          Rule: "OR('SampleOrg.member')"
+                      
         Application:
             <<: *ApplicationDefaults
             Organizations:
                 - <<: *SampleOrg
                   Policies:
                       <<: *SampleOrgPolicies
-                      Admins:
-                          Type: Signature
-                          Rule: "OR('SampleOrg.member')"
+                      
         Consortiums:
             SampleConsortium:
                 Organizations:
                     - <<: *SampleOrg
                       Policies:
                           <<: *SampleOrgPolicies
-                          Admins:
-                              Type: Signature
-                              Rule: "OR('SampleOrg.member')"
+                          
 
     # SampleDevModeKafka defines a configuration that differs from the
     # SampleDevModeSolo one only in that it uses the Kafka-based orderer.
@@ -537,27 +521,21 @@ Profiles:
                 - <<: *SampleOrg
                   Policies:
                       <<: *SampleOrgPolicies
-                      Admins:
-                          Type: Signature
-                          Rule: "OR('SampleOrg.member')"
+                      
         Application:
             <<: *ApplicationDefaults
             Organizations:
                 - <<: *SampleOrg
                   Policies:
                       <<: *SampleOrgPolicies
-                      Admins:
-                          Type: Signature
-                          Rule: "OR('SampleOrg.member')"
+                      
         Consortiums:
             SampleConsortium:
                 Organizations:
                     - <<: *SampleOrg
                       Policies:
                           <<: *SampleOrgPolicies
-                          Admins:
-                              Type: Signature
-                              Rule: "OR('SampleOrg.member')"
+                          
 
     # SampleSingleMSPChannel defines a channel with only the sample org as a
     # member. It is designed to be used in conjunction with SampleSingleMSPSolo
@@ -583,24 +561,18 @@ Profiles:
                 - <<: *SampleOrg
                   Policies:
                       <<: *SampleOrgPolicies
-                      Admins:
-                          Type: Signature
-                          Rule: "OR('SampleOrg.member')"
+                      
         Application:
             <<: *ApplicationDefaults
             Organizations:
                 - <<: *SampleOrg
                   Policies:
                       <<: *SampleOrgPolicies
-                      Admins:
-                          Type: Signature
-                          Rule: "OR('SampleOrg.member')"
+                      
         Consortiums:
             SampleConsortium:
                 Organizations:
                     - <<: *SampleOrg
                       Policies:
                           <<: *SampleOrgPolicies
-                          Admins:
-                              Type: Signature
-                              Rule: "OR('SampleOrg.member')"
+                          

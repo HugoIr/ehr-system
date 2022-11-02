@@ -1,0 +1,1 @@
+Error: failed to send transaction: got unexpected status: SERVICE_UNAVAILABLE -- channel hospital-channel is not serviced by me

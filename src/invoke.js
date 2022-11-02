@@ -40,7 +40,6 @@ async function main() {
         const contract = network.getContract('ehr');
 
         // Submit the specified transaction.
-        
         await contract.submitTransaction('createEhr', 'EHR3', 'Doni', '29', 'Male', 'Indonesia', 'healthy');
         console.log('Transaction has been submitted');
 
