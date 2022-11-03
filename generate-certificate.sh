@@ -224,7 +224,7 @@ function generateInsuranceCertificate() {
     fabric-ca-client enroll -u https://org1admin:org1adminpw@localhost:8054 --caname ca.insurance -M ${PWD}/consortium/crypto-config/peerOrganizations/insurance/users/Admin@insurance/msp --tls.certfiles ${PWD}/consortium/fabric-ca/insurance/tls-cert.pem
     { set +x; } 2>/dev/null
 
-    cp ${PWD}/consortium/crypto-config/peerOrganizations/insurance/msp/config.yaml ${PWD}/consortium/crypto-config/peerOrganizations/insurance/users/Admin@hospital/msp/config.yaml
+    cp ${PWD}/consortium/crypto-config/peerOrganizations/insurance/msp/config.yaml ${PWD}/consortium/crypto-config/peerOrganizations/insurance/users/Admin@insurance/msp/config.yaml
 }
 
 function generateOrderer() {

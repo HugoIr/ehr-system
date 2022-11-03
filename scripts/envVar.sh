@@ -14,6 +14,8 @@ export CORE_PEER_TLS_ENABLED=true
 export ORDERER_CA=${PWD}/consortium/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 export PEER0_ORG1_CA=${PWD}/consortium/crypto-config/peerOrganizations/hospital/peers/peer0.hospital/tls/ca.crt
 export PEER0_ORG2_CA=${PWD}/consortium/crypto-config/peerOrganizations/insurance/peers/peer0.insurance/tls/ca.crt
+export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/consortium/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/tlscacerts/tls-localhost-9054-ca-orderer.pem
+export CORE_PEER_MSPCONFIGPATH=${PWD}/consortium/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp
 
 # Set environment variables for the peer org
 setGlobals() {

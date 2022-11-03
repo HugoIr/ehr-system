@@ -1,1 +1,2 @@
-Error: failed to send transaction: got unexpected status: SERVICE_UNAVAILABLE -- channel hospital-channel is not serviced by me
+[34m2022-11-03 19:16:40.377 WIB [channelCmd] InitCmdFactory -> INFO 001[0m Endorser and orderer connections initialized
+[34m2022-11-03 19:16:40.525 WIB [channelCmd] executeJoin -> INFO 002[0m Successfully submitted proposal to join channel

@@ -25,7 +25,7 @@ services:
     networks:
       - healthcare-network-1
 
-  peer0.org1.example.com:
+  peer0.hospital:
     environment:
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
@@ -52,7 +52,7 @@ services:
     networks:
       - healthcare-network-1
 
-  peer0.org2.example.com:
+  peer0.insurance:
     environment:
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:5984

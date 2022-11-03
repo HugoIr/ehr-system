@@ -40,6 +40,12 @@ class Ehr extends Contract {
             sex, 
             nationality,
             medicalRecords,
+            vital_sign, 
+            medicalHistory, 
+            diagnose, 
+            immunizationHistory, 
+            allergic, 
+
         ) {
         console.info('============= START : Create Ehr ===========');
 
@@ -49,6 +55,11 @@ class Ehr extends Contract {
             sex, 
             nationality,
             medicalRecords,
+            vital_sign, 
+            medicalHistory, 
+            diagnose, 
+            immunizationHistory, 
+            allergic, 
         };
 
         await ctx.stub.putState(id, Buffer.from(JSON.stringify(ehr)));

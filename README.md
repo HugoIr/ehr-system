@@ -33,3 +33,16 @@ dengan mendefine lokasi bin, export PATH=${PWD}/bin:$PATH
 
 docker compose -f docker/docker-compose-ca.yaml up -d
 ./generate-certificate.sh
+
+
+
+
+NOTES TERBARUU!!!
+DONT FORGET TO CLEAN UP USING ./network-setup.sh down
+^ Tujuannya supaya sampah2 di dockernya di clean up
+
+STEPP DARI AWALL BANGET
+docker compose -f docker/docker-compose-ca.yaml up -d
+./generate-certificate.sh
+./network-setup.sh up 
+./network-setup.sh createChannel

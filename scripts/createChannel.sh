@@ -44,16 +44,16 @@ createChannel() {
 	# Poll in case the raft leader is not set yet
 	local rc=1
 	local COUNTER=1
-	peer channel list
-	# while [ $rc -ne 0 -a $COUNTER -lt $MAX_RETRY ] ; do
-	# 	sleep $DELAY
-	# 	set -x
-	# 	peer channel create -o localhost:7050 -c $CHANNEL_NAME --ordererTLSHostnameOverride orderer.example.com -f ./channel-artifacts/${CHANNEL_NAME}.tx --outputBlock $BLOCKFILE --tls --cafile $ORDERER_CA >&log.txt
-	# 	res=$?
-	# 	{ set +x; } 2>/dev/null
-	# 	let rc=$res
-	# 	COUNTER=$(expr $COUNTER + 1)
-	# done
+	# peer channel list
+	while [ $rc -ne 0 -a $COUNTER -lt $MAX_RETRY ] ; do
+		sleep $DELAY
+		set -x
+		peer channel create -o localhost:7050 -c $CHANNEL_NAME --ordererTLSHostnameOverride orderer.example.com -f ./channel-artifacts/${CHANNEL_NAME}.tx --outputBlock $BLOCKFILE --tls --cafile $ORDERER_CA >&log.txt
+		res=$?
+		{ set +x; } 2>/dev/null
+		let rc=$res
+		COUNTER=$(expr $COUNTER + 1)
+	done
 	cat log.txt
 	verifyResult $res "Channel creation failed"
 }
@@ -65,6 +65,7 @@ joinChannel() {
   setGlobals $ORG
 	local rc=1
 	local COUNTER=1
+	
 	## Sometimes Join takes time, hence retry
 	while [ $rc -ne 0 -a $COUNTER -lt $MAX_RETRY ] ; do
     sleep $DELAY
@@ -96,12 +97,12 @@ createChannelTx
 FABRIC_CFG_PATH=$PWD/config
 BLOCKFILE="./channel-artifacts/${CHANNEL_NAME}.block"
 
-## Create channel
+# Create channel
 infoln "Creating channel ${CHANNEL_NAME}"
 createChannel
 successln "Channel '$CHANNEL_NAME' created"
 
-## Join all the peers to the channel
+# Join all the peers to the channel
 infoln "Joining org1 peer to the channel..."
 joinChannel 1
 infoln "Joining org2 peer to the channel..."

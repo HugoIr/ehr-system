@@ -139,7 +139,7 @@ services:
     command: /bin/bash
     volumes:
         - /var/run/:/host/var/run/
-        - ../consortium/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations
+        - ../consortium/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/consortium/crypto-config
         - ../scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
     depends_on:
       - peer0.hospital
