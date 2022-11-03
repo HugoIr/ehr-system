@@ -40,7 +40,7 @@ CC_END_POLICY="NA"
 # CC_COLL_CONFIG="./chaincode-asset-transfer/collection_config.json"
 CC_COLL_CONFIG="NA"
 # chaincode init function defaults to "NA"
-CC_INIT_FCN="NA"
+CC_INIT_FCN="initLedger"
 # use this as the default docker-compose yaml definition
 COMPOSE_FILE_BASE=docker/docker-compose-net.yaml
 
