@@ -37,67 +37,117 @@ class Ehr extends Contract {
             id,
             name,
             age,
-            sex, 
+            gender, 
             nationality,
-            medicalRecords,
-            vital_sign, 
-            medicalHistory, 
-            diagnose, 
-            immunizationHistory, 
-            allergic, 
+            vitalSign,
+            medicalHistory,
+            diagnose,
+            immunizationHistory,
+            allergic,
 
         ) {
         console.info('============= START : Create Ehr ===========');
 
+        console.log("ctx.clientIdentity ", ctx.clientIdentity)
+        const mspId = ctx.clientIdentity.getMSPID()
+        if (mspId == "HospitalMSP") {
+
         const ehr = {
             name,
             age,
-            sex, 
+            gender, 
             nationality,
-            medicalRecords,
-            vital_sign, 
-            medicalHistory, 
-            diagnose, 
-            immunizationHistory, 
-            allergic, 
+            vitalSign,
+            medicalHistory,
+            diagnose,
+            immunizationHistory,
+            allergic,
         };
 
         await ctx.stub.putState(id, Buffer.from(JSON.stringify(ehr)));
         console.info('============= END : Create Ehr ===========');
+
+        } else {
+            throw Error(`Only Hospital Admin permitted to Create EHR`)
+        }
     }
 
     async queryAllEhrs(ctx) {
         const startKey = '';
         const endKey = '';
         const allResults = [];
-        for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
-            const strValue = Buffer.from(value).toString('utf8');
-            let record;
-            try {
-                record = JSON.parse(strValue);
-            } catch (err) {
-                console.log(err);
-                record = strValue;
+
+        console.log("ctx.clientIdentity ", ctx.clientIdentity)
+        const mspId = ctx.clientIdentity.getMSPID()
+        if (mspId == "HospitalMSP") {
+        
+            for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
+                const strValue = Buffer.from(value).toString('utf8');
+                let record;
+                try {
+                    record = JSON.parse(strValue);
+                } catch (err) {
+                    console.log(err);
+                    record = strValue;
+                }
+                allResults.push({ Key: key, Record: record });
             }
-            allResults.push({ Key: key, Record: record });
+            console.info(allResults);
+            return JSON.stringify(allResults);
+        } else {
+            throw Error(`Only Hospital Admin permitted to Get All EHR`)
         }
-        console.info(allResults);
-        return JSON.stringify(allResults);
     }
 
-    async changeEhrOwner(ctx, ehrId, newOwner) {
-        console.info('============= START : changeEhrOwner ===========');
+    // async queryBelongingEhrs(ctx) {
+    //     const startKey = '';
+    //     const endKey = '';
+    //     const allResults = [];
 
-        const ehrAsBytes = await ctx.stub.getState(ehrId); // get the ehr from chaincode state
-        if (!ehrAsBytes || ehrAsBytes.length === 0) {
-            throw new Error(`${ehrId} does not exist`);
-        }
-        const ehr = JSON.parse(ehrAsBytes.toString());
-        ehr.owner = newOwner;
+    //     console.log("ctx.clientIdentity ", ctx.clientIdentity)
+    //     const mspId = ctx.clientIdentity.getMSPID()
+    //     if (mspId == "HospitalMSP") {
+        
+    //         for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
+    //             const strValue = Buffer.from(value).toString('utf8');
+    //             let record;
+    //             try {
+    //                 record = JSON.parse(strValue);
+    //             } catch (err) {
+    //                 console.log(err);
+    //                 record = strValue;
+    //             }
+    //             allResults.push({ Key: key, Record: record });
+    //         }
+    //         console.info(allResults);
+    //         return JSON.stringify(allResults);
+    //     } else {
+    //         throw Error(`Only Hospital Admin permitted to Get All EHR`)
+    //     }
+    // }
 
-        await ctx.stub.putState(ehrId, Buffer.from(JSON.stringify(ehr)));
-        console.info('============= END : changeEhrOwner ===========');
-    }
+    // async changeEhrOwner(ctx, ehrId, newOwner) {
+    //     console.info('============= START : changeEhrOwner ===========');
+
+    //     const ehrAsBytes = await ctx.stub.getState(ehrId); // get the ehr from chaincode state
+    //     if (!ehrAsBytes || ehrAsBytes.length === 0) {
+    //         throw new Error(`${ehrId} does not exist`);
+    //     }
+    //     const ehr = JSON.parse(ehrAsBytes.toString());
+    //     ehr.owner = newOwner;
+
+    //     await ctx.stub.putState(ehrId, Buffer.from(JSON.stringify(ehr)));
+    //     console.info('============= END : changeEhrOwner ===========');
+    // }
+
+    // async beforeTransaction(ctx) {
+    //     console.log('Checking Access');
+            
+    //     const clientID = ctx.clientIdentity.getID();
+        
+    //     console.log('Allowed CLIENTID ', clientID);
+    //     }
+    // }
 
 }
 

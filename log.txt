@@ -1,1 +1,1 @@
-[34m2022-11-03 20:21:11.056 WIB [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001[0m Chaincode invoke successful. result: status:200 
+[34m2022-11-19 20:47:14.104 WIB [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001[0m Chaincode invoke successful. result: status:200 

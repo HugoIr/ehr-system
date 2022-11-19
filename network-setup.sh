@@ -269,11 +269,20 @@ function createOrgs() {
 
 function CAServiceUp() {
   IMAGE_TAG= docker-compose -f ${COMPOSE_FILE_CA} up -d
-
+  generateCertificates
+  generateCCP
   docker ps -a
   if [ $? -ne 0 ]; then
     fatalln "Unable to start CA Service"
   fi
+}
+
+function generateCertificates() {
+  ./generate-certificate.sh
+}
+
+function generateCCP() {
+  ./consortium/ccp-generate.sh
 }
 
 # Bring up the peer and orderer nodes using docker compose.
@@ -449,6 +458,8 @@ fi
 # Determine mode of operation and printing out what we asked for
 if [ "$MODE" == "up" ]; then
   infoln "Starting nodes with CLI timeout of '${MAX_RETRY}' tries and CLI delay of '${CLI_DELAY}' seconds and using database '${DATABASE}' ${CRYPTO_MODE}"
+elif [ "${MODE}" == "ca" ]; then
+  infoln "Generating Certificates"
 elif [ "$MODE" == "createChannel" ]; then
   infoln "Creating channel '${CHANNEL_NAME}'."
   infoln "If network is not up, starting nodes with CLI timeout of '${MAX_RETRY}' tries and CLI delay of '${CLI_DELAY}' seconds and using database '${DATABASE} ${CRYPTO_MODE}"
@@ -465,8 +476,9 @@ fi
 
 if [ "${MODE}" == "up" ]; then
   createConsortium
-  CAServiceUp
   networkUp
+elif [ "${MODE}" == "ca" ]; then
+  CAServiceUp
 elif [ "${MODE}" == "createChannel" ]; then
   createChannel
 elif [ "${MODE}" == "deployCC" ]; then
