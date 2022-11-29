@@ -13,6 +13,7 @@ const { getEhrById } = require('./service/getEhrById')
 const { getInsuranceEhr } = require('./service/getInsuranceEHR')
 const { loginUser } = require('./service/loginUser')
 const { getEhrHistory } = require('./service/getEhrHistory')
+const { updateEhr } = require('./service/updateEhr')
 const app = express()
 const port = 8000
 
@@ -119,25 +120,94 @@ app.post('/ehr/', jsonParser, async function(req, res) {
     }
     try {
         console.log("REQ", req.body)
+
         const name = req.body.name;
-        const age = req.body.age;
-        const gender  = req.body.gender ;
+        const dateOfBirth = req.body.dateOfBirth;
+        const address = req.body.address;
+        const phoneNumber = req.body.phoneNumber;
+        const gender = req.body.gender;
         const nationality = req.body.nationality;
-        const medicalHistory  = req.body.medicalHistory ;
-        const diagnose  = req.body.diagnose ;
-        const allergic = req.body.allergic;
-        const insurance = req.body.insurance;
+        const bloodType = req.body.bloodType;
+        const height = req.body.height;
+        const weight = req.body.weight;
+        const pulseRate = req.body.pulseRate;
+        const bloodPressure = req.body.bloodPressure;
+        const respiratoryRate = req.body.respiratoryRate;
+        const medicalHistory = req.body.medicalHistory;
+        const diagnose = req.body.diagnose;
+        const insuranceName = req.body.insuranceName;
         
         const result = await createEhr(
             req.headers.authorization,
             name,
-            age,
-            gender,
+            dateOfBirth,
+            address,
+            phoneNumber,
+            gender, 
             nationality,
+            bloodType,
+            height,
+            weight,
+            pulseRate,
+            bloodPressure,
+            respiratoryRate,
             medicalHistory,
             diagnose,
-            allergic,
-            insurance,
+            insuranceName,
+            )
+        res.send({
+            "result": result
+        })
+    } catch (error) {
+        res.status(400).send(
+            {
+                "result": error
+            }
+        )
+    }
+})
+
+app.put('/ehr/:id', jsonParser, async function(req, res) {
+    if (req.headers.authorization == undefined) {
+        return res.status(401).send({"result": "Unauthorized"})
+    }
+    try {
+        console.log("REQ", req.body)
+
+        const name = req.body.name;
+        const dateOfBirth = req.body.dateOfBirth;
+        const address = req.body.address;
+        const phoneNumber = req.body.phoneNumber;
+        const gender = req.body.gender;
+        const nationality = req.body.nationality;
+        const bloodType = req.body.bloodType;
+        const height = req.body.height;
+        const weight = req.body.weight;
+        const pulseRate = req.body.pulseRate;
+        const bloodPressure = req.body.bloodPressure;
+        const respiratoryRate = req.body.respiratoryRate;
+        const medicalHistory = req.body.medicalHistory;
+        const diagnose = req.body.diagnose;
+        const insuranceName = req.body.insuranceName;
+        
+        const result = await updateEhr(
+            req.headers.authorization,
+            req.params.id,
+            name,
+            dateOfBirth,
+            address,
+            phoneNumber,
+            gender, 
+            nationality,
+            bloodType,
+            height,
+            weight,
+            pulseRate,
+            bloodPressure,
+            respiratoryRate,
+            medicalHistory,
+            diagnose,
+            insuranceName,
             )
         res.send({
             "result": result

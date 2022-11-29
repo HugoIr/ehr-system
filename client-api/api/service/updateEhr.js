@@ -3,8 +3,9 @@ const fs = require('fs');
 const path = require('path');
 const { randomUUID } = require('crypto'); // Added in: node v14.17.0
 
-const createEhr = async (
+const updateEhr = async (
     user,
+    ehrId,
     name,
     dateOfBirth,
     address,
@@ -48,8 +49,12 @@ const createEhr = async (
         // defined in CC_NAME network-setup.sh
         const contract = network.getContract('fab-healthcare');
         
-        await contract.submitTransaction('createEhr',
-            randomUUID(),
+        // console.log("MEDICAL HIsto ", medicalHistory)
+        // console.log("MEDICAL HIsto stringify ", JSON.stringify(medicalHistory))
+        // Submit the specified transaction.
+        // const result = await contract.evaluateTransaction('queryAllEhrs');
+        await contract.submitTransaction('updateEhr',
+            ehrId,
             name,
             dateOfBirth,
             address,
@@ -66,7 +71,7 @@ const createEhr = async (
             JSON.stringify(diagnose), 
             insuranceName,
             );
-        // await contract.submitTransaction('createEhr', 'EHR3', 'Doni', '29', 'Male', 'Indonesia', 'healthy');
+        // await contract.submitTransaction('updateEhr', 'EHR3', 'Doni', '29', 'Male', 'Indonesia', 'healthy');
         console.log('Transaction has been submitted');
         
         // Disconnect from the gateway.
@@ -80,4 +85,4 @@ const createEhr = async (
     }
 }
 
-module.exports = {createEhr};
+module.exports = {updateEhr};

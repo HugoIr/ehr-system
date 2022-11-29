@@ -77,13 +77,21 @@ class Ehr extends Contract {
     async createEhr(ctx, 
             id,
             name,
-            age,
+            dateOfBirth,
+            address,
+            phoneNumber,
             gender, 
             nationality,
+            bloodType,
+            height,
+            weight,
+            pulseRate,
+            bloodPressure,
+            respiratoryRate,
             medicalHistory,
             diagnose,
-            allergic,
-            insurance
+            insuranceName,
+            
 
         ) {
         console.info('============= START : Create Ehr ===========');
@@ -95,13 +103,21 @@ class Ehr extends Contract {
         const ehr = {
             id,
             name,
-            age,
+            dateOfBirth,
+            address,
+            phoneNumber,
             gender, 
             nationality,
+            bloodType,
+            height,
+            weight,
+            pulseRate,
+            bloodPressure,
+            respiratoryRate,
             medicalHistory,
             diagnose,
-            allergic,
-            insurance,
+            insuranceName,
+            
         };
         console.log("ERH smart contract " , ehr)
         await ctx.stub.putState(id, Buffer.from(JSON.stringify(ehr)));
@@ -110,6 +126,112 @@ class Ehr extends Contract {
         } else {
             throw Error(`Only Hospital Admin permitted to Create EHR`)
         }
+    }
+
+    async updateEhr(ctx, 
+        ehrId,
+        name,
+        dateOfBirth,
+        address,
+        phoneNumber,
+        gender, 
+        nationality,
+        bloodType,
+        height,
+        weight,
+        pulseRate,
+        bloodPressure,
+        respiratoryRate,
+        medicalHistory,
+        diagnose,
+        insuranceName,
+        
+
+    ) {
+    console.info('============= START : Update Ehr ===========');
+
+    console.log("ctx.clientIdentity ", ctx.clientIdentity)
+    const mspId = ctx.clientIdentity.getMSPID()
+    
+    if (mspId == "HospitalMSP") {
+        const ehrAsBytes = await ctx.stub.getState(ehrId); // get the ehr from chaincode state
+        if (!ehrAsBytes || ehrAsBytes.length === 0) {
+            throw new Error(`${ehrId} does not exist`);
+        }
+        const ehr = JSON.parse(ehrAsBytes.toString());
+
+    // const ehr = {
+    //     ehrId,
+    //     name,
+    //     dateOfBirth,
+    //     address,
+    //     phoneNumber,
+    //     gender, 
+    //     nationality,
+    //     bloodType,
+    //     height,
+    //     weight,
+    //     pulseRate,
+    //     bloodPressure,
+    //     respiratoryRate,
+    //     medicalHistory,
+    //     diagnose,
+    //     insuranceName,
+    // };
+
+        if (name != undefined) {
+            ehr.name = name;
+        }    
+        if (dateOfBirth != undefined) {
+            ehr.dateOfBirth = dateOfBirth;
+        }
+        if (address != undefined) {
+            ehr.address = address;
+        }
+        if (phoneNumber != undefined) {
+            ehr.phoneNumber = phoneNumber;
+        }
+        if (gender != undefined) {
+            ehr.gender = gender;
+        }
+        if (nationality != undefined) {
+            ehr.nationality = nationality;
+        }
+        if (bloodType != undefined) {
+            ehr.bloodType = bloodType;
+        }
+        if (height != undefined) {
+            ehr.height = height;
+        }
+        if (weight != undefined) {
+            ehr.weight = weight;
+        }
+        if (pulseRate != undefined) {
+            ehr.pulseRate = pulseRate;
+        }
+        if (bloodPressure != undefined) {
+            ehr.bloodPressure = bloodPressure;
+        }
+        if (respiratoryRate != undefined) {
+            ehr.respiratoryRate = respiratoryRate;
+        }
+        if (medicalHistory != undefined) {
+            ehr.medicalHistory = medicalHistory;
+        }
+        if (diagnose != undefined) {
+            ehr.diagnose = diagnose;
+        }
+        if (insuranceName != undefined) {
+            ehr.insuranceName = insuranceName;
+        }
+
+        await ctx.stub.putState(ehrId, Buffer.from(JSON.stringify(ehr)));
+        console.log("ERH smart contract " , ehr)
+        console.info('============= END : Update Ehr ===========');
+
+    } else {
+        throw Error(`Only Hospital Admin permitted to Update EHR`)
+    }
     }
 
     async queryAllEhrs(ctx) {
@@ -214,17 +336,16 @@ class Ehr extends Contract {
                     timestamp: new Date((transaction.timestamp.seconds.low + ((transaction.timestamp.nanos / 1000000) / 1000)) * 1000)
                 }
             )
-            result = JSON.stringify(result);
         }
+        result = JSON.stringify(result);
+        
         if (mspId == "HospitalMSP") {
-
             return result;
+
         } else if (mspId == "InsuranceMSP") {
             if (`insurance.${insurance}` == ctx.clientIdentity.attrs['hf.Affiliation']) {
-                
-                
                 return result;
-                
+
             } else {
                 throw new Error(`Not permitted to access ehr with id: ${ehrId}`);
             }

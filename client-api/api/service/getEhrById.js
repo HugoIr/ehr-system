@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { AffiliationService } = require('fabric-ca-client');
 const FabricCAServices = require('fabric-ca-client');
+const { getEhrParser } = require('../utils/converter');
 
 
 const getEhrById = async (id, user) => {
@@ -78,7 +79,7 @@ const getEhrById = async (id, user) => {
 
         await gateway.disconnect();
         
-        return JSON.parse((result));
+        return getEhrParser(result);
         
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);
