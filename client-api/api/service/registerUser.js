@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { getAdminIdentity } = require('../utils/helper');
 
-const registerUser = async (email, organizationType) => {
+const registerUser = async (email, organization, organizationType) => {
     try {
         // load the network configuration
         const ccpPath = path.resolve(__dirname, '..', '..', '..', 'consortium', 'crypto-config', 'peerOrganizations', organizationType, `connection-${organizationType}.json`);
@@ -24,16 +24,13 @@ const registerUser = async (email, organizationType) => {
         // Check to see if we've already enrolled the user.
         const userIdentity = await wallet.get(email);
         if (userIdentity) {
-            console.log('An identity for the user email already exists in the wallet');
-            return;
+            throw 'An identity for the user email already exists in the wallet'
         }
         const adminId = getAdminIdentity(organizationType);
         // Check to see if we've already enrolled the admin user.
         const adminIdentity = await wallet.get(adminId);
         if (!adminIdentity) {
-            console.log('An identity for the admin user "admin" does not exist in the wallet');
-            console.log('Run the registerUser.js application before retrying');
-            return;
+            throw "Admin network does not exist"
         }
         
         // build a user object for authenticating with the CA
@@ -44,7 +41,8 @@ const registerUser = async (email, organizationType) => {
         // Register the user, enroll the user, and import the new identity into the wallet.
         const secret = await ca.register({
             enrollmentID: email,
-            role: "client"
+            role: "client",
+            affiliation: organization,
         }, adminUser);
 
         console.log("SECRET of USER ", secret)
@@ -68,7 +66,7 @@ const registerUser = async (email, organizationType) => {
 
     } catch (error) {
         console.error(`Failed to register user email: ${error}`);
-        // process.exit(1);
+        throw error.toString()
     }
 }
 

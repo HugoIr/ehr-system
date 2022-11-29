@@ -1,9 +1,12 @@
 const { Gateway, Wallets } = require('fabric-network');
 const path = require('path');
 const fs = require('fs');
-const { getAllEhrParser } = require('../utils/converter');
+const { AffiliationService } = require('fabric-ca-client');
+const FabricCAServices = require('fabric-ca-client');
+const { getHistoryEhrParser } = require('../utils/converter');
 
-const getAllEhr = async (user) => {
+
+const getEhrHistory = async (id, user) => {
     try {
         // load the network configuration
         const ccpPath = path.resolve(__dirname, '..', '..', '..',   'consortium', 'crypto-config', 'peerOrganizations', 'hospital', 'connection-hospital.json');
@@ -35,12 +38,26 @@ const getAllEhr = async (user) => {
         const contract = network.getContract('fab-healthcare');
 
         // Evaluate the specified transaction.
-        let result = await contract.evaluateTransaction('queryAllEhrs');
-        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-        
+        const ehrHistory = await contract.evaluateTransaction('getEhrHistory', id, 'insuranceA');
+        // console.log("result ", ehrHistory['result'])
+        // console.log(`Transaction has been evaluated, result is: ${JSON.parse(ehrHistory['result'])}`);
+
         await gateway.disconnect();
+
+        // console.log("ehrhist ", JSON.parse(ehrHistory))
+        // console.log("ehrhist value ", JSON.parse(ehrHistory)[0]['value'].data)
+        // console.log("ehrhist value 2 ", JSON.parse(Buffer(JSON.parse(ehrHistory)[0]['value'].data)))
+        // const buf = Buffer(ehrHistory.toJSON().data);
+        // console.log("BUFF ", buf)
+        // console.log("JSON BUFF ", JSON.parse(buf))
+        // const result = JSON.parse(ehrHistory.toJSON())
+        // console.log("result ", result[0])
+        // if (result[0]['value'] != undefined) {
+        //     result[0]['value'] = JSON.parse(result[0]['value'])
+        //     console.log("result[0]['value']", result[0]['value'])
+        // }
         
-        return getAllEhrParser(result);
+        return getHistoryEhrParser(ehrHistory);
         
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);
@@ -48,4 +65,4 @@ const getAllEhr = async (user) => {
     }
 }
 
-module.exports = {getAllEhr};
+module.exports = {getEhrHistory};

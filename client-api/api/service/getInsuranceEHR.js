@@ -1,9 +1,9 @@
 const { Gateway, Wallets } = require('fabric-network');
 const path = require('path');
 const fs = require('fs');
-const { getAllEhrParser } = require('../utils/converter');
+const { EHRParser } = require('../utils/converter');
 
-const getAllEhr = async (user) => {
+const getInsuranceEhr = async (user) => {
     try {
         // load the network configuration
         const ccpPath = path.resolve(__dirname, '..', '..', '..',   'consortium', 'crypto-config', 'peerOrganizations', 'hospital', 'connection-hospital.json');
@@ -35,12 +35,13 @@ const getAllEhr = async (user) => {
         const contract = network.getContract('fab-healthcare');
 
         // Evaluate the specified transaction.
-        let result = await contract.evaluateTransaction('queryAllEhrs');
+        const result = await contract.evaluateTransaction('queryBelongingEhrs');
         console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+        // Disconnect from the gateway.
         
         await gateway.disconnect();
         
-        return getAllEhrParser(result);
+        return JSON.parse((result));
         
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);
@@ -48,4 +49,4 @@ const getAllEhr = async (user) => {
     }
 }
 
-module.exports = {getAllEhr};
+module.exports = {getInsuranceEhr};

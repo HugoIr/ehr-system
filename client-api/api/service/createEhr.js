@@ -9,11 +9,10 @@ const createEhr = async (
     age,
     gender, 
     nationality,
-    vitalSign, 
     medicalHistory, 
     diagnose, 
-    immunizationHistory, 
-    allergic, ) => {
+    allergic,
+    insurance, ) => {
     try {
         // load the network configuration
         const ccpPath = path.resolve(__dirname, '..', '..', '..',   'consortium', 'crypto-config', 'peerOrganizations', 'hospital', 'connection-hospital.json');
@@ -27,9 +26,7 @@ const createEhr = async (
         // Check to see if we've already enrolled the user.
         const identity = await wallet.get(user);
         if (!identity) {
-            console.log('An identity for the user "appUser" does not exist in the wallet');
-            console.log('Run the registerUser.js application before retrying');
-            return;
+            throw "User does not exist"
         }
 
         // Create a new gateway for connecting to our peer node.
@@ -43,7 +40,8 @@ const createEhr = async (
         // defined in CC_NAME network-setup.sh
         const contract = network.getContract('fab-healthcare');
         
-
+        console.log("MEDICAL HIsto ", medicalHistory)
+        console.log("MEDICAL HIsto stringify ", JSON.stringify(medicalHistory))
         // Submit the specified transaction.
         // const result = await contract.evaluateTransaction('queryAllEhrs');
         await contract.submitTransaction('createEhr',
@@ -51,12 +49,11 @@ const createEhr = async (
             name,
             age,
             gender, 
-            nationality,
-            vitalSign, 
-            medicalHistory, 
-            diagnose, 
-            immunizationHistory, 
-            allergic
+            nationality, 
+            JSON.stringify(medicalHistory), 
+            JSON.stringify(diagnose), 
+            JSON.stringify(allergic),
+            insurance
             );
         // await contract.submitTransaction('createEhr', 'EHR3', 'Doni', '29', 'Male', 'Indonesia', 'healthy');
         console.log('Transaction has been submitted');
@@ -67,6 +64,7 @@ const createEhr = async (
 
     } catch (error) {
         console.error(`Failed to submit transaction: ${error}`);
+        throw error.toString()
         // process.exit(1);
     }
 }

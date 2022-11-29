@@ -23,6 +23,9 @@ createAnchorPeerUpdate() {
   elif [ $ORG -eq 2 ]; then
     HOST="peer0.insurance"
     PORT=9051
+  elif [ $ORG -eq 3 ]; then
+    HOST="peer1.hospital"
+    PORT=8051    
   else
     errorln "Org${ORG} unknown"
   fi
@@ -35,7 +38,7 @@ createAnchorPeerUpdate() {
   # Compute a config update, based on the differences between 
   # {orgmsp}config.json and {orgmsp}modified_config.json, write
   # it as a transaction to {orgmsp}anchors.tx
-  createConfigUpdate ${CHANNEL_NAME} ${CORE_PEER_LOCALMSPID}config.json ${CORE_PEER_LOCALMSPID}modified_config.json ${CORE_PEER_LOCALMSPID}anchors.tx
+  `createConfigUpdate` ${CHANNEL_NAME} ${CORE_PEER_LOCALMSPID}config.json ${CORE_PEER_LOCALMSPID}modified_config.json ${CORE_PEER_LOCALMSPID}anchors.tx
 }
 
 updateAnchorPeer() {

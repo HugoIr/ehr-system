@@ -65,7 +65,7 @@ IMAGETAG="latest"
 # default ca image tag
 CA_IMAGETAG="latest"
 # default database
-DATABASE="leveldb"
+DATABASE="couchdb"
 
 NETWORK_DOCKER=docker/docker-compose-net.yaml
 

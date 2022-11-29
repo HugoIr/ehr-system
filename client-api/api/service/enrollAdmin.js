@@ -4,9 +4,9 @@ const { Wallets } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
 
-const enrollAdmin = async (enrollId, enrollSecret) => {
+const enrollAdmin = async (enrollId, enrollSecret, organizationType) => {
     try {
-        const organizationType = "insurance";
+        // const organizationType = "insurance";
         // load the network configuration
         console.log('DIRNAME ', __dirname);
         // const ccpPath = path.resolve(__dirname, '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
@@ -26,16 +26,15 @@ const enrollAdmin = async (enrollId, enrollSecret) => {
         console.log(`Wallet path: ${walletPath}`);
 
         // Check to see if we've already enrolled the admin user.
-        const identity = await wallet.get(`admin2`);
+        const identity = await wallet.get(enrollId);
         if (identity) {
-            console.log('An identity for the admin user "admin" already exists in the wallet');
-            return;
+            throw 'An identity for the admin already exists in the wallet'
         }
         console.log("Identity, ", identity)
         
         // Enroll the admin user, and import the new identity into the wallet.
         const enrollment = await ca.enroll ({ 
-            enrollmentID: enrollId, 
+            enrollmentID: 'admin', 
             enrollmentSecret: enrollSecret 
         });
         console.log("enrollment, ", enrollment)
@@ -48,12 +47,12 @@ const enrollAdmin = async (enrollId, enrollSecret) => {
             type: 'X.509',
         };
         console.log("x509Identity, ", x509Identity)
-        await wallet.put(`admin2`, x509Identity);
+        await wallet.put(enrollId, x509Identity);
         console.log('Successfully enrolled admin user "admin" and imported it into the wallet');
 
     } catch (error) {
         console.error(`Failed to enroll admin user "admin": ${error}`);
-        // process.exit(1);
+        throw error.toString()
     }
 }
 
