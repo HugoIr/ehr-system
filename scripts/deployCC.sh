@@ -151,7 +151,7 @@ approveForMyOrg() {
   ORG=$1
   setGlobals $ORG
   set -x
-  peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} --version ${CC_VERSION} --package-id ${PACKAGE_ID} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
+  peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --signature-policy "OR('HospitalMSP.member', 'InsuranceMSP.member')"  --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} --version ${CC_VERSION} --package-id ${PACKAGE_ID} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
   res=$?
   { set +x; } 2>/dev/null
   cat log.txt
@@ -173,7 +173,7 @@ checkCommitReadiness() {
     sleep $DELAY
     infoln "Attempting to check the commit readiness of the chaincode definition on peer0.org${ORG}, Retry after $DELAY seconds."
     set -x
-    peer lifecycle chaincode checkcommitreadiness --channelID $CHANNEL_NAME --name ${CC_NAME} --version ${CC_VERSION} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} --output json >&log.txt
+    peer lifecycle chaincode checkcommitreadiness --signature-policy "OR('HospitalMSP.member', 'InsuranceMSP.member')"  --channelID $CHANNEL_NAME --name ${CC_NAME} --version ${CC_VERSION} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} --output json >&log.txt
     res=$?
     { set +x; } 2>/dev/null
     let rc=0
@@ -200,7 +200,7 @@ commitChaincodeDefinition() {
   # peer (if join was successful), let's supply it directly as we know
   # it using the "-o" option
   set -x
-  peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} $PEER_CONN_PARMS --version ${CC_VERSION} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
+  peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --signature-policy "OR('HospitalMSP.member', 'InsuranceMSP.member')"  --name ${CC_NAME} $PEER_CONN_PARMS --version ${CC_VERSION} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
   res=$?
   { set +x; } 2>/dev/null
   cat log.txt
@@ -282,7 +282,7 @@ chaincodeQuery() {
   fi
 }
 
-## package the chaincode
+# package the chaincode
 packageChaincode
 
 ## Install chaincode on peer0.hospital and peer0.org2
@@ -298,7 +298,7 @@ installChaincode 2
 # query whether the chaincode is installed
 queryInstalled 1
 
-## approve the definition for hospital
+# approve the definition for hospital
 approveForMyOrg 1
 
 ## check whether the chaincode definition is ready to be committed
@@ -306,7 +306,7 @@ approveForMyOrg 1
 checkCommitReadiness 1 "\"HospitalMSP\": true" "\"InsuranceMSP\": false"
 checkCommitReadiness 2 "\"HospitalMSP\": true" "\"InsuranceMSP\": false"
 
-## now approve also for org2
+## now approve also for insurance
 approveForMyOrg 2
 
 ## check whether the chaincode definition is ready to be committed
@@ -315,7 +315,7 @@ checkCommitReadiness 1 "\"HospitalMSP\": true" "\"InsuranceMSP\": true"
 checkCommitReadiness 2 "\"HospitalMSP\": true" "\"InsuranceMSP\": true"
 
 ## now that we know for sure both orgs have approved, commit the definition
-commitChaincodeDefinition 1 2
+commitChaincodeDefinition 1 2 3
 
 ## query on both orgs to see that the definition committed successfully
 queryCommitted 1

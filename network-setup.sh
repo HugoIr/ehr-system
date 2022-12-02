@@ -41,6 +41,7 @@ CC_END_POLICY="NA"
 CC_COLL_CONFIG="NA"
 # chaincode init function defaults to "NA"
 CC_INIT_FCN="initLedger"
+# CC_INIT_FCN="NA"
 # use this as the default docker-compose yaml definition
 COMPOSE_FILE_BASE=docker/docker-compose-net.yaml
 

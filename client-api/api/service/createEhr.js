@@ -47,9 +47,9 @@ const createEhr = async (
         // Get the contract from the network.
         // defined in CC_NAME network-setup.sh
         const contract = network.getContract('fab-healthcare');
-        
+        const ehrId = randomUUID();
         await contract.submitTransaction('createEhr',
-            randomUUID(),
+            ehrId,
             name,
             dateOfBirth,
             address,
@@ -71,7 +71,7 @@ const createEhr = async (
         
         // Disconnect from the gateway.
         await gateway.disconnect();
-        return 'Transaction has been submitted'
+        return ehrId
 
     } catch (error) {
         console.error(`Failed to submit transaction: ${error}`);

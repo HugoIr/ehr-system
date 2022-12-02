@@ -156,7 +156,8 @@ app.post('/ehr/', jsonParser, async function(req, res) {
             insuranceName,
             )
         res.send({
-            "result": result
+            "message": "Transaction has been submitted",
+            "ehrId": result
         })
     } catch (error) {
         res.status(400).send(

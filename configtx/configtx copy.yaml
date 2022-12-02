@@ -58,26 +58,43 @@ Organizations:
         # For organization policies, their canonical path is usually
         #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
         Policies: &HospitalPolicies
+            # Readers:
+            #     # Type: Signature
+            #     # Rule: "OR('HospitalMSP.admin', 'HospitalMSP.peer', 'HospitalMSP.client')"
+                
+            #     Type: ImplicitMeta
+            #     Rule: "ANY Readers"
+                
+            #     # If your MSP is configured with the new NodeOUs, you might
+            #     # want to use a more specific rule like the following:
+            #     # Rule: "OR('SampleOrg.admin', 'SampleOrg.peer', 'SampleOrg.client')"
+            # Writers:
+            #     # Type: Signature
+            #     # Rule: "OR('HospitalMSP.admin', 'HospitalMSP.client', 'HospitalMSP.peer')"
+                
+            #     # If your MSP is configured with the new NodeOUs, you might
+            #     # want to use a more specific rule like the following:
+            #     # Rule: "OR('SampleOrg.admin', 'SampleOrg.client')"
+            # Admins:
+            #     Type: Signature
+            #     Rule: "OR('HospitalMSP.admin')"
+
             Readers:
-                Type: Signature
-                # Rule: "OR('HospitalMSP.member')"
-                Rule: "OR('HospitalMSP.admin', 'HospitalMSP.peer', 'HospitalMSP.client')"
-                # If your MSP is configured with the new NodeOUs, you might
-                # want to use a more specific rule like the following:
-                # Rule: "OR('SampleOrg.admin', 'SampleOrg.peer', 'SampleOrg.client')"
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
             Writers:
-                Type: Signature
-                # Rule: "OR('HospitalMSP.member')"
-                Rule: "OR('HospitalMSP.admin', 'HospitalMSP.client', 'HospitalMSP.peer')"
-                # If your MSP is configured with the new NodeOUs, you might
-                # want to use a more specific rule like the following:
-                # Rule: "OR('SampleOrg.admin', 'SampleOrg.client')"
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
             Admins:
-                Type: Signature
-                Rule: "OR('HospitalMSP.admin')"
-            Endorsement:
-                Type: Signature
-                Rule: "OR('HospitalMSP.peer')"
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+            # Endorsement:
+            #     Type: Signature
+            #     Rule: "OR('HospitalMSP.peer')"
+                # Type: ImplicitMeta
+                # Rule: "MAJORITY Endorsement"
+                # Type: Signature
+                # Rule: "OutOf(2, 'HospitalMSP.member', 'InsuranceMSP.member')"
         
         AnchorPeers:
             - Host: 127.0.0.1
@@ -99,26 +116,40 @@ Organizations:
         # For organization policies, their canonical path is usually
         #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
         Policies: &InsurancePolicies
+            # Readers:
+            #     Type: Signature
+            #     # Rule: "OR('InsuranceMSP.member')"
+            #     Rule: "OR('InsuranceMSP.admin', 'InsuranceMSP.peer', 'InsuranceMSP.client')"
+            #     # If your MSP is configured with the new NodeOUs, you might
+            #     # want to use a more specific rule like the following:
+            #     # Rule: "OR('SampleOrg.admin', 'SampleOrg.peer', 'SampleOrg.client')"
+            # Writers:
+            #     Type: Signature
+            #     # Rule: "OR('InsuranceMSP.member')"
+            #     Rule: "OR('InsuranceMSP.admin', 'InsuranceMSP.client', 'InsuranceMSP.peer')"
+            #     # If your MSP is configured with the new NodeOUs, you might
+            #     # want to use a more specific rule like the following:
+            #     # Rule: "OR('SampleOrg.admin', 'SampleOrg.client')"
+            # Admins:
+            #     Type: Signature
+            #     Rule: "OR('InsuranceMSP.admin')"
+            # Endorsement:
+            #     Type: Signature
+            #     Rule: "OR('InsuranceMSP.peer')"
             Readers:
-                Type: Signature
-                # Rule: "OR('InsuranceMSP.member')"
-                Rule: "OR('InsuranceMSP.admin', 'InsuranceMSP.peer', 'InsuranceMSP.client')"
-                # If your MSP is configured with the new NodeOUs, you might
-                # want to use a more specific rule like the following:
-                # Rule: "OR('SampleOrg.admin', 'SampleOrg.peer', 'SampleOrg.client')"
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
             Writers:
-                Type: Signature
-                # Rule: "OR('InsuranceMSP.member')"
-                Rule: "OR('InsuranceMSP.admin', 'InsuranceMSP.client', 'InsuranceMSP.peer')"
-                # If your MSP is configured with the new NodeOUs, you might
-                # want to use a more specific rule like the following:
-                # Rule: "OR('SampleOrg.admin', 'SampleOrg.client')"
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
             Admins:
-                Type: Signature
-                Rule: "OR('InsuranceMSP.admin')"
-            Endorsement:
-                Type: Signature
-                Rule: "OR('InsuranceMSP.peer')"
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+            # Endorsement:
+            #     Type: Signature
+            #     Rule: "OR('HospitalMSP.peer')"
+                # Type: ImplicitMeta
+                # Rule: "MAJORITY Endorsement"
         AnchorPeers:
             - Host: 127.0.0.1
               Port: 9051            
@@ -206,11 +237,11 @@ Application: &ApplicationDefaults
             Type: ImplicitMeta
             Rule: "MAJORITY Admins"
         LifecycleEndorsement:
-            Type: Signature
-            Rule: "OR('InsuranceMSP.member', 'HospitalMSP.member')"
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
         Endorsement:
-            Type: Signature
-            Rule: "OR('InsuranceMSP.member', 'HospitalMSP.member')"
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
 
     Capabilities:
         <<: *ApplicationCapabilities
@@ -281,7 +312,7 @@ Orderer: &OrdererDefaults
         # from the orderer for the peer to validate it.
         BlockValidation:
             Type: ImplicitMeta
-            Rule: "ANY Writers"
+            Rule: "MAJORITY Writers"
 
 ################################################################################
 #
