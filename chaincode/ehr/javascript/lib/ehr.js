@@ -24,8 +24,10 @@ class Ehr extends Contract {
         console.info('============= END : Initialize Ledger ===========');
     }
 
-    async queryEhr(ctx, ehrId) {
-        const ehrAsBytes = await ctx.stub.getState(ehrId); // get the ehr from chaincode state
+    async queryEhrById(ctx, ehrId) {
+        // const ehrAsBytes = await ctx.stub.getState(ehrId); // get the ehr from chaincode state
+
+        const ehrAsBytes = await ctx.stub.getPrivateData("_implicit_org_HospitalMSP", ehrId);
         if (!ehrAsBytes || ehrAsBytes.length === 0) {
             throw new Error(`${ehrId} does not exist`);
         }
@@ -37,33 +39,10 @@ class Ehr extends Contract {
         if (mspId == "HospitalMSP") {
             return ehrResult;
         } else if (mspId == "InsuranceMSP") {
-            // console.log('ehrasbytes tostring ins', `insurance.${ehrAsBytes.toString().insurance}`)
-            // console.log('ehrasbytes tostring ins2', `insurance.${ehrAsBytes.toString()['insurance']}`)
-
-            console.log('ehrasbytes ', `insurance.${ehrAsBytes}`)
-            // console.log("MAP GET ehrbytes ", ehrAsBytes.get("insurance"))
-            
-            // ehrAsBytes.toJSON().map((elem) => {
-            //     console.log("elem ",elem)
-            // })
-
-            // console.log('ehrasbytes json age ', `insurance.${ehrAsBytes.toJSON().get('age')}`)
-
-            // console.log('ehrasbytes json raw', `insurance.${ehrAsBytes.toJSON()}`)
-            // console.log('ehrasbytes json age ', `insurance.${ehrAsBytes.toJSON()['age']}`)
-            // console.log('ehrasbytes json ', `insurance.${ehrAsBytes.toJSON()['insurance']}`)
-            // console.log('ehrasbytes json2 ', `insurance.${ehrAsBytes.toJSON().insurance}`)
 
             
-
-            // console.log("ctx.stub.getArgs() ", ctx.stub.getArgs())
-
-            // console.log('ehrasbytes insurance ', `insurance.${ehrAsBytes['insurance']}`)
-            // console.log('ctx.clientIdentity.attrs hf aff ', ctx.clientIdentity.attrs['hf.Affiliation'])
-            // console.log('equall ', `insurance.${ehrAsBytes.toJSON()['insurance']}` == ctx.clientIdentity.attrs['hf.Affiliation'])
-            
-            console.log("JSON.parse(ehrResult)['insurance'] ", JSON.parse(ehrResult)['insurance'])
-            if (`insurance.${JSON.parse(ehrResult)['insurance']}` == ctx.clientIdentity.attrs['hf.Affiliation']) {
+            console.log("JSON.parse(ehrResult)['insuranceName'] ", JSON.parse(ehrResult)['insuranceName'])
+            if (`insurance.${JSON.parse(ehrResult)['insuranceName']}` == ctx.clientIdentity.attrs['hf.Affiliation']) {
                 return ehrResult;
             } else {
                 throw new Error(`Not permitted to access ehr with id: ${ehrId}`);
@@ -74,59 +53,95 @@ class Ehr extends Contract {
         
     }
 
+    // async createEhr(ctx) {
+    //     console.info('============= START : Create Ehr ===========');
+
+    //     console.log("ctx.clientIdentity ", ctx.clientIdentity)
+    //     const mspId = ctx.clientIdentity.getMSPID()
+    //     if (mspId == "HospitalMSP") {
+
+        
+    //     const transMap = ctx.stub.getTransient()
+    //     console.log("transMap ", transMap)
+    //     const keyValueAsBytes = transMap.get('keyvalue')
+    //     console.log("keyValueAsBytes ", keyValueAsBytes)
+    //     // const ehrJson = JSON.parse(keyValueAsBytes)
+    //     // console.log("jsonParsed ", jsonParsed)
+        
+            
+    //     // console.log("Buffer.from(JSON.stringify(ehr)) ", Buffer.from(JSON.stringify(ehrJson)))
+        
+    //     // const ehrJson = JSON.parse(ehr)
+    //     await ctx.stub.putPrivateData("_implicit_org_HospitalMSP", 'ehrid', keyValueAsBytes);
+    //     console.info('============= END : Create Ehr ===========');
+
+    //     } else {
+    //         throw Error(`Only Hospital Admin permitted to Create EHR`)
+    //     }
+    // }
+
     async createEhr(ctx, 
-            id,
-            name,
-            dateOfBirth,
-            address,
-            phoneNumber,
-            gender, 
-            nationality,
-            bloodType,
-            height,
-            weight,
-            pulseRate,
-            bloodPressure,
-            respiratoryRate,
-            medicalHistory,
-            diagnose,
-            insuranceName,
-            
+        id,
+        name,
+        dateOfBirth,
+        address,
+        phoneNumber,
+        gender, 
+        nationality,
+        bloodType,
+        height,
+        weight,
+        pulseRate,
+        bloodPressure,
+        respiratoryRate,
+        medicalHistory,
+        diagnose,
+        insuranceName,
+        
+    ) {
+    console.info('============= START : Create Ehr ===========');
 
-        ) {
-        console.info('============= START : Create Ehr ===========');
+    console.log("ctx.clientIdentity ", ctx.clientIdentity)
+    const mspId = ctx.clientIdentity.getMSPID()
+    if (mspId == "HospitalMSP") {
 
-        console.log("ctx.clientIdentity ", ctx.clientIdentity)
-        const mspId = ctx.clientIdentity.getMSPID()
-        if (mspId == "HospitalMSP") {
+    const ehr = {
+        id,
+        name,
+        dateOfBirth,
+        address,
+        phoneNumber,
+        gender, 
+        nationality,
+        bloodType,
+        height,
+        weight,
+        pulseRate,
+        bloodPressure,
+        respiratoryRate,
+        medicalHistory,
+        diagnose,
+        insuranceName,
+        
+    };
 
-        const ehr = {
-            id,
-            name,
-            dateOfBirth,
-            address,
-            phoneNumber,
-            gender, 
-            nationality,
-            bloodType,
-            height,
-            weight,
-            pulseRate,
-            bloodPressure,
-            respiratoryRate,
-            medicalHistory,
-            diagnose,
-            insuranceName,
-            
-        };
-        console.log("ERH smart contract " , ehr)
-        await ctx.stub.putState(id, Buffer.from(JSON.stringify(ehr)));
-        console.info('============= END : Create Ehr ===========');
+    // const transMap = ctx.stub.getTransient()
+    // console.log("transMap ", transMap)
+    // keyValueAsBytes = transMap["keyvalue"]
+    // console.log("keyValueAsBytes ", keyValueAsBytes)
+    // const jsonParsed = JSON.parse(keyValueAsBytes)
+    // console.log("jsonParsed ", jsonParsed)
+    // console.log("ERH smart contract " , ehr)
+    // await ctx.stub.putState(id, Buffer.from(JSON.stringify(ehr)));
+    console.log("Buffer.from(JSON.stringify(ehr)) ", Buffer.from(JSON.stringify(ehr)))
+    console.log("JSON.parse(JSON.stringify(ehr)) ", JSON.parse(JSON.stringify(ehr)))
+    await ctx.stub.putPrivateData("_implicit_org_HospitalMSP", id, Buffer.from(JSON.stringify(ehr)));
+    console.info('============= END : Create Ehr ===========');
 
-        } else {
-            throw Error(`Only Hospital Admin permitted to Create EHR`)
-        }
+    } else {
+        throw Error(`Only Hospital Admin permitted to Create EHR`)
     }
+}
 
     async updateEhr(ctx, 
         ehrId,
@@ -159,25 +174,6 @@ class Ehr extends Contract {
             throw new Error(`${ehrId} does not exist`);
         }
         const ehr = JSON.parse(ehrAsBytes.toString());
-
-    // const ehr = {
-    //     ehrId,
-    //     name,
-    //     dateOfBirth,
-    //     address,
-    //     phoneNumber,
-    //     gender, 
-    //     nationality,
-    //     bloodType,
-    //     height,
-    //     weight,
-    //     pulseRate,
-    //     bloodPressure,
-    //     respiratoryRate,
-    //     medicalHistory,
-    //     diagnose,
-    //     insuranceName,
-    // };
 
         if (name != undefined) {
             ehr.name = name;
@@ -242,7 +238,12 @@ class Ehr extends Contract {
         console.log("ctx.clientIdentity ", ctx.clientIdentity)
         const mspId = ctx.clientIdentity.getMSPID()
         if (mspId == "HospitalMSP") {
-        
+            console.log("ctx.stub.getCreator() ", ctx.stub.getCreator());
+            console.log("ctx.stub.getChannelID() ", ctx.stub.getChannelID());
+            console.log("ctx.stub.getBinding() ", ctx.stub.getBinding());
+            console.log("ctx.stub.getDateTimestamp() ", ctx.stub.getDateTimestamp());
+            console.log("ctx.stub.getFunctionAndParameters() ", ctx.stub.getFunctionAndParameters());
+            
             for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
                 const strValue = Buffer.from(value).toString('utf8');
                 let record;
@@ -262,11 +263,7 @@ class Ehr extends Contract {
     }
 
     async queryBelongingEhrs(ctx) {
-        // const startKey = '';
-        // const endKey = '';
         const allResults = [];
-
-
 
         console.log("ctx.clientIdentity ", ctx.clientIdentity)
         const mspId = ctx.clientIdentity.getMSPID()
@@ -283,7 +280,7 @@ class Ehr extends Contract {
             } else {
                 query = {
                     "selector": {
-                        "insurance": ctx.clientIdentity.attrs['hf.Affiliation'].split('.')[1]
+                        "insuranceName": ctx.clientIdentity.attrs['hf.Affiliation'].split('.')[1]
                     }
                 }
                 console.log("inside msp insurance ", ctx.clientIdentity.attrs['hf.Affiliation'].split('.')[1])
@@ -307,14 +304,10 @@ class Ehr extends Contract {
         }
     }
 
-    async getEhrHistory(ctx, ehrId, insurance) {
+    async queryEhrHistory(ctx, ehrId) {
 
-        // console.log("ctx.clientIdentity ", ctx.clientIdentity)
-        // console.log("ctx.clientIdentity.getAttributeValue()  ", ctx.clientIdentity.attrs['hf.Affiliation'])
         const mspId = ctx.clientIdentity.getMSPID()
         const historyIterator = await ctx.stub.getHistoryForKey(ehrId)
-        console.log("HISTORY ITER ", historyIterator)
-        // console.log("HISTORY ITER strng ", historyIterator.toString())
 
         let result = []
         historyIterator.hasNext = async function hasNext() {
@@ -323,11 +316,8 @@ class Ehr extends Contract {
             return !item.done;
         };
         while (await historyIterator.hasNext()) {
-            console.log("historyIterator.current", historyIterator.current);
             const transaction = historyIterator.current;
-            // console.log("Buffer.from(transaction.value) to json ", Buffer.from(transaction.value).toJSON())
-            console.log("trans val", transaction.value)
-            console.log("Buffer.from(transaction.value) parse ", JSON.parse(Buffer.from(transaction.value)))
+
             const value = Buffer(JSON.parse(JSON.stringify(Buffer.from(transaction.value)))).toString()
             result.push(
                 {
@@ -339,43 +329,12 @@ class Ehr extends Contract {
         }
         result = JSON.stringify(result);
         
-        if (mspId == "HospitalMSP") {
+        if (mspId == "HospitalMSP" || mspId == "InsuranceMSP") {
             return result;
-
-        } else if (mspId == "InsuranceMSP") {
-            if (`insurance.${insurance}` == ctx.clientIdentity.attrs['hf.Affiliation']) {
-                return result;
-
-            } else {
-                throw new Error(`Not permitted to access ehr with id: ${ehrId}`);
-            }
         } else {
             throw new Error(`Unknown MSPID: ${mspId}`);
         }
     }
-
-    // async changeEhrOwner(ctx, ehrId, newOwner) {
-    //     console.info('============= START : changeEhrOwner ===========');
-
-    //     const ehrAsBytes = await ctx.stub.getState(ehrId); // get the ehr from chaincode state
-    //     if (!ehrAsBytes || ehrAsBytes.length === 0) {
-    //         throw new Error(`${ehrId} does not exist`);
-    //     }
-    //     const ehr = JSON.parse(ehrAsBytes.toString());
-    //     ehr.owner = newOwner;
-
-    //     await ctx.stub.putState(ehrId, Buffer.from(JSON.stringify(ehr)));
-    //     console.info('============= END : changeEhrOwner ===========');
-    // }
-
-    // async beforeTransaction(ctx) {
-    //     console.log('Checking Access');
-            
-    //     const clientID = ctx.clientIdentity.getID();
-        
-    //     console.log('Allowed CLIENTID ', clientID);
-    //     }
-    // }
 
 }
 

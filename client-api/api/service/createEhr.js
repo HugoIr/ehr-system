@@ -1,4 +1,4 @@
-const { Gateway, Wallets } = require('fabric-network');
+const { Gateway, Wallets, DefaultEventHandlerStrategies, DefaultQueryHandlerStrategies } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
 const { randomUUID } = require('crypto'); // Added in: node v14.17.0
@@ -36,14 +36,24 @@ const createEhr = async (
         if (!identity) {
             throw "User does not exist"
         }
+        console.log("gtway")
 
         // Create a new gateway for connecting to our peer node.
         const gateway = new Gateway();
-        await gateway.connect(ccp, { wallet, identity: identity, discovery: { enabled: true, asLocalhost: true } });
+        console.log("gtway connect")
+        // await gateway.connect(ccp, { wallet, identity: identity, discovery: { enabled: true, asLocalhost: true },
+        //      queryHandlerOptions: { strategy: DefaultQueryHandlerStrategies.PREFER_MSPID_SCOPE_ROUND_ROBIN}, 
+        //      eventHandlerOptions: {strategy: DefaultEventHandlerStrategies.NETWORK_SCOPE_ANYFORTX},
+        // });
+        await gateway.connect(ccp, { wallet, identity: identity, discovery: { enabled: true, asLocalhost: true }
+       });
+        console.log("BEfore network")
+        console.log("getway", gateway.getOptions())
 
         // Get the network (channel) our contract is deployed to.
         const network = await gateway.getNetwork('hospital-channel');
-
+        
+        console.log("GATEWAY options2 ", gateway.getOptions())
         // Get the contract from the network.
         // defined in CC_NAME network-setup.sh
         const contract = network.getContract('fab-healthcare');
@@ -75,7 +85,9 @@ const createEhr = async (
 
     } catch (error) {
         console.error(`Failed to submit transaction: ${error}`);
+        await gateway.disconnect();
         throw error.toString()
+        
         // process.exit(1);
     }
 }

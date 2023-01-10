@@ -1,0 +1,110 @@
++ CHAINCODE_DIR=/usr/local/src
++ cd /usr/local/src
++ npm start -- --peer.address peer1.hospital:8052
+
+> ehr@1.0.0 start /usr/local/src
+> fabric-chaincode-node start "--peer.address" "peer1.hospital:8052"
+
+2022-12-23T12:03:12.387Z info [c-api:contracts-spi/bootstrap.js]                  No metadata file supplied in contract, introspection will generate all the data  
+2022-12-23T12:03:12.622Z info [c-api:lib/chaincode.js]                            Registering with peer peer1.hospital:8052 as chaincode "fab-healthcare_1.0:1833447cb8727065be7cd8a77c759e1433f17ddb13117be7c2ba435ba6f14774"  
+2022-12-23T12:03:12.849Z info [c-api:lib/handler.js]                              Successfully registered with peer node. State transferred to "established"  
+2022-12-23T12:03:12.850Z info [c-api:lib/handler.js]                              Successfully established communication with peer node. State transferred to "ready"  
+ctx.clientIdentity  ClientIdentity {
+  stub: ChaincodeStub {
+    channel_id: 'hospital-channel',
+    txId: 'f610a289e77d3863f6f43446f1fc45a63e2c496db0b43d3bbf849d85eaf6f414',
+    bufferArgs: [ <Buffer 71 75 65 72 79 41 6c 6c 45 68 72 73> ],
+    args: [ 'queryAllEhrs' ],
+    handler: ChaincodeMessageHandler {
+      _stream: [ClientDuplexStreamImpl],
+      chaincode: [ChaincodeFromContract],
+      msgQueueHandler: [MsgQueueHandler]
+    },
+    validationParameterMetakey: 'VALIDATION_PARAMETER',
+    proposal: Proposal {
+      header: <Buffer 0a 9c 01 08 03 10 01 1a 0c 08 b3 b4 96 9d 06 10 80 be c3 be 02 22 10 68 6f 73 70 69 74 61 6c 2d 63 68 61 6e 6e 65 6c 2a 40 66 36 31 30 61 32 38 39 65 ... 1077 more bytes>,
+      payload: <Buffer 0a 28 0a 26 08 01 12 10 12 0e 66 61 62 2d 68 65 61 6c 74 68 63 61 72 65 1a 10 0a 0c 71 75 65 72 79 41 6c 6c 45 68 72 73 18 00>
+    },
+    creator: SerializedIdentity {
+      mspid: 'HospitalMSP',
+      idBytes: <Buffer 2d 2d 2d 2d 2d 42 45 47 49 4e 20 43 45 52 54 49 46 49 43 41 54 45 2d 2d 2d 2d 2d 0a 4d 49 49 43 65 6a 43 43 41 69 43 67 41 77 49 42 41 67 49 55 56 62 ... 870 more bytes>
+    },
+    txTimestamp: Timestamp { seconds: [Long], nanos: 668000000 },
+    transientMap: Map {},
+    signedProposal: {
+      signature: <Buffer 30 44 02 20 76 64 b2 d3 21 96 26 3f b5 0d b2 c2 8e 2d a6 5b 7c f7 04 83 4e 58 42 ca 62 ef d9 7a c0 bd 6b 7c 02 20 55 d3 00 ba d6 28 d9 2f ff c7 d4 b2 ... 20 more bytes>,
+      proposal: [Object]
+    },
+    binding: 'f93656ea27258bd37272aa23ee99a7de907edad8092343ae921b064c6454eb19'
+  },
+  mspId: 'HospitalMSP',
+  idBytes: <Buffer 2d 2d 2d 2d 2d 42 45 47 49 4e 20 43 45 52 54 49 46 49 43 41 54 45 2d 2d 2d 2d 2d 0a 4d 49 49 43 65 6a 43 43 41 69 43 67 41 77 49 42 41 67 49 55 56 62 ... 870 more bytes>,
+  id: 'x509::/OU=client/OU=hospital/OU=hospitalA/CN=hos2::/C=US/ST=North Carolina/O=Hyperledger/OU=Fabric/CN=fabric-ca-server',
+  attrs: {
+    'hf.Affiliation': 'hospital.hospitalA',
+    'hf.EnrollmentID': 'hos2',
+    'hf.Type': 'client'
+  }
+}
+ctx.stub.getCreator()  SerializedIdentity {
+  mspid: 'HospitalMSP',
+  idBytes: <Buffer 2d 2d 2d 2d 2d 42 45 47 49 4e 20 43 45 52 54 49 46 49 43 41 54 45 2d 2d 2d 2d 2d 0a 4d 49 49 43 65 6a 43 43 41 69 43 67 41 77 49 42 41 67 49 55 56 62 ... 870 more bytes>
+}
+ctx.stub.getChannelID()  hospital-channel
+ctx.stub.getBinding()  f93656ea27258bd37272aa23ee99a7de907edad8092343ae921b064c6454eb19
+ctx.stub.getDateTimestamp()  2022-12-23T12:08:19.668Z
+ctx.stub.getFunctionAndParameters()  { fcn: 'queryAllEhrs', params: [] }
+[]
+
+
+
+
+
+2022-12-23T12:08:19.876Z info [c-api:lib/handler.js]                              [hospital-channel-f610a289] Calling chaincode Invoke() succeeded. Sending COMPLETED message back to peer  
+ctx.clientIdentity  ClientIdentity {
+  stub: ChaincodeStub {
+    channel_id: 'hospital-channel',
+    txId: '2c9c096517f82f1615bc6f4375494607685f10f6c0799a772bded4cbfb301b71',
+    bufferArgs: [ <Buffer 71 75 65 72 79 41 6c 6c 45 68 72 73> ],
+    args: [ 'queryAllEhrs' ],
+    handler: ChaincodeMessageHandler {
+      _stream: [ClientDuplexStreamImpl],
+      chaincode: [ChaincodeFromContract],
+      msgQueueHandler: [MsgQueueHandler]
+    },
+    validationParameterMetakey: 'VALIDATION_PARAMETER',
+    proposal: Proposal {
+      header: <Buffer 0a 9b 01 08 03 10 01 1a 0b 08 d0 b4 96 9d 06 10 80 c6 fd 14 22 10 68 6f 73 70 69 74 61 6c 2d 63 68 61 6e 6e 65 6c 2a 40 32 63 39 63 30 39 36 35 31 37 ... 1076 more bytes>,
+      payload: <Buffer 0a 28 0a 26 08 01 12 10 12 0e 66 61 62 2d 68 65 61 6c 74 68 63 61 72 65 1a 10 0a 0c 71 75 65 72 79 41 6c 6c 45 68 72 73 18 00>
+    },
+    creator: SerializedIdentity {
+      mspid: 'HospitalMSP',
+      idBytes: <Buffer 2d 2d 2d 2d 2d 42 45 47 49 4e 20 43 45 52 54 49 46 49 43 41 54 45 2d 2d 2d 2d 2d 0a 4d 49 49 43 65 6a 43 43 41 69 43 67 41 77 49 42 41 67 49 55 56 62 ... 870 more bytes>
+    },
+    txTimestamp: Timestamp { seconds: [Long], nanos: 44000000 },
+    transientMap: Map {},
+    signedProposal: {
+      signature: <Buffer 30 44 02 20 4b 2d cd c6 d6 30 59 05 a7 c9 dd a0 28 32 66 1e fd 6c ce 92 c1 6c af fa 5c 89 67 ed 2c 19 30 12 02 20 24 f4 ef 34 12 73 a3 47 65 dc b0 9e ... 20 more bytes>,
+      proposal: [Object]
+    },
+    binding: '0ce4e8c0431141a8f16b291d1e97967fc1c821cdca6629d76a2216b1bfe2007e'
+  },
+  mspId: 'HospitalMSP',
+  idBytes: <Buffer 2d 2d 2d 2d 2d 42 45 47 49 4e 20 43 45 52 54 49 46 49 43 41 54 45 2d 2d 2d 2d 2d 0a 4d 49 49 43 65 6a 43 43 41 69 43 67 41 77 49 42 41 67 49 55 56 62 ... 870 more bytes>,
+  id: 'x509::/OU=client/OU=hospital/OU=hospitalA/CN=hos2::/C=US/ST=North Carolina/O=Hyperledger/OU=Fabric/CN=fabric-ca-server',
+  attrs: {
+    'hf.Affiliation': 'hospital.hospitalA',
+    'hf.EnrollmentID': 'hos2',
+    'hf.Type': 'client'
+  }
+}
+ctx.stub.getCreator()  SerializedIdentity {
+  mspid: 'HospitalMSP',
+  idBytes: <Buffer 2d 2d 2d 2d 2d 42 45 47 49 4e 20 43 45 52 54 49 46 49 43 41 54 45 2d 2d 2d 2d 2d 0a 4d 49 49 43 65 6a 43 43 41 69 43 67 41 77 49 42 41 67 49 55 56 62 ... 870 more bytes>
+}
+ctx.stub.getChannelID()  hospital-channel
+ctx.stub.getBinding()  0ce4e8c0431141a8f16b291d1e97967fc1c821cdca6629d76a2216b1bfe2007e
+ctx.stub.getDateTimestamp()  2022-12-23T12:08:48.044Z
+ctx.stub.getFunctionAndParameters()  { fcn: 'queryAllEhrs', params: [] }
+[]
+2022-12-23T12:08:48.111Z info [c-api:lib/handler.js]                              [hospital-channel-2c9c0965] Calling chaincode Invoke() succeeded. Sending COMPLETED message back to peer  

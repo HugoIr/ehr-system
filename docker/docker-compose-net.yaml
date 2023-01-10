@@ -7,6 +7,8 @@ version: '2'
 
 volumes:
   orderer.example.com:
+  orderer2.example.com:
+  orderer3.example.com:
   peer0.hospital:
   peer1.hospital:
   peer0.insurance:
@@ -35,8 +37,7 @@ services:
       - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
       - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-      - ORDERER_KAFKA_TOPIC_REPLICATIONFACTOR=1
-      - ORDERER_KAFKA_VERBOSE=true
+
       - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
       - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
@@ -50,6 +51,76 @@ services:
     ports:
       - 7050:7050
       - 17050:17050
+    networks:
+      - healthcare-network-1
+
+  orderer2.example.com:
+    container_name: orderer2.example.com
+    image: hyperledger/fabric-orderer:2.2
+    environment:
+      - FABRIC_LOGGING_SPEC=INFO
+      # - FABRIC_LOGGING_SPEC=DEBUG
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_LISTENPORT=8050
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:18050
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+        - ../system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../consortium/crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/msp:/var/hyperledger/orderer/msp
+        - ../consortium/crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/:/var/hyperledger/orderer/tls
+        - orderer2.example.com:/var/hyperledger/production/orderer
+    ports:
+      - 8050:8050
+      - 18050:18050
+    networks:
+      - healthcare-network-1
+
+  orderer3.example.com:
+    container_name: orderer3.example.com
+    image: hyperledger/fabric-orderer:2.2
+    environment:
+      - FABRIC_LOGGING_SPEC=INFO
+      # - FABRIC_LOGGING_SPEC=DEBUG
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_LISTENPORT=9050
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:19050
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+        - ../system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../consortium/crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/msp:/var/hyperledger/orderer/msp
+        - ../consortium/crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/tls/:/var/hyperledger/orderer/tls
+        - orderer3.example.com:/var/hyperledger/production/orderer
+    ports:
+      - 9050:9050
+      - 19050:19050
     networks:
       - healthcare-network-1
 
@@ -170,26 +241,58 @@ services:
     networks:
       - healthcare-network-1
 
+  # cli:
+  #   container_name: cli
+  #   image: hyperledger/fabric-tools:latest
+  #   tty: true
+  #   stdin_open: true
+  #   environment:
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     - GOPATH=/opt/gopath
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - FABRIC_LOGGING_SPEC=INFO
+  #     # - FABRIC_LOGGING_SPEC=DEBUG
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   command: /bin/bash
+  #   volumes:
+  #       - /var/run/:/host/var/run/
+  #       - ../consortium/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/consortium/crypto-config
+  #       - ../scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+  #   depends_on:
+  #     - peer0.hospital
+  #     - peer1.hospital
+  #     - peer0.insurance
+  #   networks:
+  #     - healthcare-network-1
   cli:
     container_name: cli
     image: hyperledger/fabric-tools:latest
     tty: true
     stdin_open: true
     environment:
-      - CORE_PEER_TLS_ENABLED=true
+      - SYS_CHANNEL=$SYS_CHANNEL
       - GOPATH=/opt/gopath
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      #- FABRIC_LOGGING_SPEC=DEBUG
       - FABRIC_LOGGING_SPEC=INFO
-      # - FABRIC_LOGGING_SPEC=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.hospital:7051
+      - CORE_PEER_LOCALMSPID=HospitalMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/consortium/crypto-config/peerOrganizations/hospital/peers/peer0.hospital/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/consortium/crypto-config/peerOrganizations/hospital/peers/peer0.hospital/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/consortium/crypto-config/peerOrganizations/hospital/peers/peer0.hospital/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/consortium/crypto-config/peerOrganizations/hospital/users/Admin@hospital/msp
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:
         - /var/run/:/host/var/run/
-        - ../consortium/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/consortium/crypto-config
-        - ../scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./../chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./../consortium/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/consortium/crypto-config
+        - ./../scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./../channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
     depends_on:
+      - orderer.example.com
       - peer0.hospital
-      - peer1.hospital
-      - peer0.insurance
     networks:
       - healthcare-network-1

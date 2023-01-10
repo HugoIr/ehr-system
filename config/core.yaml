@@ -140,9 +140,9 @@ peer:
         # Should we skip verifying block messages or not (currently not in use)
         skipBlockVerification: false
         # Dial timeout(unit: second)
-        dialTimeout: 3s
+        dialTimeout: 1s
         # Connection timeout(unit: second)
-        connTimeout: 2s
+        connTimeout: 1s
         # Buffer size of received messages
         recvBuffSize: 20
         # Buffer size of sending messages
@@ -243,7 +243,7 @@ peer:
             checkInterval: 10s
             # responseTimeout amount of time to wait for state transfer response from
             # other peers
-            responseTimeout: 3s
+            responseTimeout: 1s
             # batchSize the number of blocks to request via state transfer from another peer
             batchSize: 10
             # blockBufferSize reflects the size of the re-ordering buffer
@@ -339,7 +339,7 @@ peer:
     # CLI common client config options
     client:
         # connection timeout
-        connTimeout: 3s
+        connTimeout: 1s
 
     # Delivery service related config
     deliveryclient:
@@ -348,7 +348,7 @@ peer:
         reconnectTotalTimeThreshold: 3600s
 
         # It sets the delivery service <-> ordering service node connection timeout
-        connTimeout: 3s
+        connTimeout: 1s
 
         # It sets the delivery service maximal delay between consecutive retries
         reConnectBackoffThreshold: 3600s
@@ -431,7 +431,7 @@ peer:
     validatorPoolSize:
 
     # The discovery service is used by clients to query information about peers,
-    # such as - which peers have joined a certain channel, what is the latest
+    # such as - which peers have joined a certain channel, what is the 2.2
     # channel config, and most importantly - given a chaincode and a channel,
     # what possible sets of peers satisfy the endorsement policy.
     discovery:
@@ -528,7 +528,7 @@ chaincode:
 
     # Enables/disables force pulling of the base docker images (listed below)
     # during user chaincode instantiation.
-    # Useful when using moving image tags (such as :latest)
+    # Useful when using moving image tags (such as :2.2)
     pull: false
 
     golang:

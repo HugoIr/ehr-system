@@ -279,7 +279,7 @@ function CAServiceUp() {
 }
 
 function generateCertificates() {
-  ./generate-certificate.sh
+  sudo ./generate-certificate.sh
 }
 
 function generateCCP() {
@@ -479,7 +479,7 @@ if [ "${MODE}" == "up" ]; then
   createConsortium
   networkUp
 elif [ "${MODE}" == "ca" ]; then
-  CAServiceUp
+  docker compose -f docker/docker-compose-ca.yaml up -d
 elif [ "${MODE}" == "createChannel" ]; then
   createChannel
 elif [ "${MODE}" == "deployCC" ]; then

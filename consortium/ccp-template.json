@@ -6,7 +6,8 @@
         "connection": {
             "timeout": {
                 "peer": {
-                    "endorser": "300"
+                    "endorser": "1",
+                    "eventReg": "1"
                 }
             }
         }

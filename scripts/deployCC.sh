@@ -2,6 +2,8 @@
 
 source scripts/utils.sh
 
+FABRIC_CFG_PATH=$PWD/config/
+
 CHANNEL_NAME=${1:-"hospital-channel"}
 CC_NAME=${2}
 CC_SRC_PATH=${3}
@@ -29,24 +31,24 @@ println "- DELAY: ${C_GREEN}${DELAY}${C_RESET}"
 println "- MAX_RETRY: ${C_GREEN}${MAX_RETRY}${C_RESET}"
 println "- VERBOSE: ${C_GREEN}${VERBOSE}${C_RESET}"
 
-FABRIC_CFG_PATH=$PWD/config/
 
-#User has not provided a name
-if [ -z "$CC_NAME" ] || [ "$CC_NAME" = "NA" ]; then
-  fatalln "No chaincode name was provided. Valid call example: ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go"
 
-# User has not provided a path
-elif [ -z "$CC_SRC_PATH" ] || [ "$CC_SRC_PATH" = "NA" ]; then
-  fatalln "No chaincode path was provided. Valid call example: ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go"
+# #User has not provided a name
+# if [ -z "$CC_NAME" ] || [ "$CC_NAME" = "NA" ]; then
+#   fatalln "No chaincode name was provided. Valid call example: ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go"
 
-# User has not provided a language
-elif [ -z "$CC_SRC_LANGUAGE" ] || [ "$CC_SRC_LANGUAGE" = "NA" ]; then
-  fatalln "No chaincode language was provided. Valid call example: ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go"
+# # User has not provided a path
+# elif [ -z "$CC_SRC_PATH" ] || [ "$CC_SRC_PATH" = "NA" ]; then
+#   fatalln "No chaincode path was provided. Valid call example: ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go"
 
-## Make sure that the path to the chaincode exists
-elif [ ! -d "$CC_SRC_PATH" ]; then
-  fatalln "Path to chaincode does not exist. Please provide different path."
-fi
+# # User has not provided a language
+# elif [ -z "$CC_SRC_LANGUAGE" ] || [ "$CC_SRC_LANGUAGE" = "NA" ]; then
+#   fatalln "No chaincode language was provided. Valid call example: ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go"
+
+# ## Make sure that the path to the chaincode exists
+# elif [ ! -d "$CC_SRC_PATH" ]; then
+#   fatalln "Path to chaincode does not exist. Please provide different path."
+# fi
 
 CC_SRC_LANGUAGE=$(echo "$CC_SRC_LANGUAGE" | tr [:upper:] [:lower:])
 
@@ -111,7 +113,7 @@ fi
 
 packageChaincode() {
   set -x
-  peer lifecycle chaincode package ${CC_NAME}.tar.gz --path ${CC_SRC_PATH} --lang ${CC_RUNTIME_LANGUAGE} --label ${CC_NAME}_${CC_VERSION} >&log.txt
+  peer lifecycle chaincode package ${CC_NAME}.tar.gz --connTimeout 1s --path ${CC_SRC_PATH} --lang ${CC_RUNTIME_LANGUAGE} --label ${CC_NAME}_${CC_VERSION} >&log.txt
   res=$?
   { set +x; } 2>/dev/null
   cat log.txt
@@ -124,7 +126,7 @@ installChaincode() {
   ORG=$1
   setGlobals $ORG
   set -x
-  peer lifecycle chaincode install ${CC_NAME}.tar.gz >&log.txt
+  peer lifecycle chaincode install ${CC_NAME}.tar.gz --connTimeout 1s >&log.txt
   res=$?
   { set +x; } 2>/dev/null
   cat log.txt
@@ -137,7 +139,7 @@ queryInstalled() {
   ORG=$1
   setGlobals $ORG
   set -x
-  peer lifecycle chaincode queryinstalled >&log.txt
+  peer lifecycle chaincode queryinstalled --connTimeout 1s >&log.txt
   res=$?
   { set +x; } 2>/dev/null
   cat log.txt
@@ -151,7 +153,8 @@ approveForMyOrg() {
   ORG=$1
   setGlobals $ORG
   set -x
-  peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --signature-policy "OR('HospitalMSP.member', 'InsuranceMSP.member')"  --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} --version ${CC_VERSION} --package-id ${PACKAGE_ID} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
+  parsePeerConnectionParameters $@
+  peer lifecycle chaincode approveformyorg -o localhost:7050 --connTimeout 1s  --ordererTLSHostnameOverride orderer.example.com  --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} --version ${CC_VERSION} --package-id ${PACKAGE_ID} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
   res=$?
   { set +x; } 2>/dev/null
   cat log.txt
@@ -173,7 +176,7 @@ checkCommitReadiness() {
     sleep $DELAY
     infoln "Attempting to check the commit readiness of the chaincode definition on peer0.org${ORG}, Retry after $DELAY seconds."
     set -x
-    peer lifecycle chaincode checkcommitreadiness --signature-policy "OR('HospitalMSP.member', 'InsuranceMSP.member')"  --channelID $CHANNEL_NAME --name ${CC_NAME} --version ${CC_VERSION} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} --output json >&log.txt
+    peer lifecycle chaincode checkcommitreadiness  --channelID $CHANNEL_NAME --connTimeout 1s  --name ${CC_NAME} --version ${CC_VERSION} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} --output json >&log.txt
     res=$?
     { set +x; } 2>/dev/null
     let rc=0
@@ -200,7 +203,7 @@ commitChaincodeDefinition() {
   # peer (if join was successful), let's supply it directly as we know
   # it using the "-o" option
   set -x
-  peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME --signature-policy "OR('HospitalMSP.member', 'InsuranceMSP.member')"  --name ${CC_NAME} $PEER_CONN_PARMS --version ${CC_VERSION} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
+  peer lifecycle chaincode commit -o localhost:7050 --connTimeout 1s  --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA --channelID $CHANNEL_NAME  --name ${CC_NAME} $PEER_CONN_PARMS --version ${CC_VERSION} --sequence ${CC_SEQUENCE} ${INIT_REQUIRED} ${CC_END_POLICY} ${CC_COLL_CONFIG} >&log.txt
   res=$?
   { set +x; } 2>/dev/null
   cat log.txt
@@ -222,7 +225,7 @@ queryCommitted() {
     sleep $DELAY
     infoln "Attempting to Query committed status on peer0.org${ORG}, Retry after $DELAY seconds."
     set -x
-    peer lifecycle chaincode querycommitted --channelID $CHANNEL_NAME --name ${CC_NAME} >&log.txt
+    peer lifecycle chaincode querycommitted --connTimeout 1s --channelID $CHANNEL_NAME --name ${CC_NAME} >&log.txt
     res=$?
     { set +x; } 2>/dev/null
     test $res -eq 0 && VALUE=$(cat log.txt | grep -o '^Version: '$CC_VERSION', Sequence: [0-9]*, Endorsement Plugin: escc, Validation Plugin: vscc')
@@ -248,7 +251,7 @@ chaincodeInvokeInit() {
   set -x
   fcn_call='{"function":"'${CC_INIT_FCN}'","Args":[]}'
   infoln "invoke fcn call:${fcn_call}"
-  peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS --isInit -c ${fcn_call} >&log.txt
+  peer chaincode invoke -o localhost:7050 --connTimeout 1s --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CC_NAME} $PEER_CONN_PARMS --isInit -c ${fcn_call} >&log.txt
   res=$?
   { set +x; } 2>/dev/null
   cat log.txt
@@ -268,7 +271,7 @@ chaincodeQuery() {
     sleep $DELAY
     infoln "Attempting to Query peer0.org${ORG}, Retry after $DELAY seconds."
     set -x
-    peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"Args":["queryAllCars"]}' >&log.txt
+    peer chaincode query --connTimeout 1s -C $CHANNEL_NAME -n ${CC_NAME} -c '{"Args":["queryAllCars"]}' >&log.txt
     res=$?
     { set +x; } 2>/dev/null
     let rc=$res

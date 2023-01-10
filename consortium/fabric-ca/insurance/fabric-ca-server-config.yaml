@@ -243,7 +243,9 @@ ldap:
 #############################################################################
 affiliations:
    hospital:
-      - hospitalA
+      - doctor
+      - admin
+      - nurse
    insurance:
       - insuranceA
       - insuranceB
